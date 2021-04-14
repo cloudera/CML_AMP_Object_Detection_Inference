@@ -1,0 +1,8 @@
+R
+node_modules
+*.pyc
+__pycache__
+.*
+!.gitignore
+!.project-metadata.yaml
+.ipynb_checkpoints
