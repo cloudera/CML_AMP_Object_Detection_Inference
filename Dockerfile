@@ -6,7 +6,4 @@ COPY . .
 
 RUN pip3 install -r requirements.txt
 
-# expose default port for streamlit
-EXPOSE 8501
-
-CMD streamlit run app/app.py
+CMD streamlit run app/app.py --server.port 80
