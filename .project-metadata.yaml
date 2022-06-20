@@ -5,6 +5,14 @@ specification_version: 1.0
 prototype_version: 2.0
 date: "2022-04-04"
 
+environment_variables:
+  STREAMLIT_SERVER_FILE_WATCHER_TYPE:
+    default: poll
+    description: >-
+      Instruct Streamlit to use polling rather than watchdog file watching, 
+      as watchdog can occasionally trigger OS watch limits for the number/type 
+      of Python packages installed in this project.
+
 runtimes:
   - editor: Workbench
     kernel: Python 3.9
