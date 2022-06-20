@@ -64,7 +64,7 @@ def welcome(session_state, preset_images):
         model processes an image to quickly and accurately detect objects while also exploring fundamental object detection concepts along the way."
     )
 
-    with st.beta_expander("Object Detection - A Brief Overview", expanded=True):
+    with st.expander("Object Detection - A Brief Overview", expanded=True):
         st.write(
             "In the field of computer vision, object detection refers to the task of classifying and localizing distinct objects of interest within an image. \
             Traditionally, state-of-the-art object detectors have been based on a two-stage architecture, where the first stage narrows the search space by \
@@ -77,7 +77,7 @@ def welcome(session_state, preset_images):
             object signal *without* the privilege of an independent proposal system."
         )
 
-    with st.beta_expander("RetinaNet", expanded=True):
+    with st.expander("RetinaNet", expanded=True):
         st.image(
             "images/retinanet_architecture.png",
             caption="The one-stage RetinaNet network architecture",
@@ -92,13 +92,13 @@ def welcome(session_state, preset_images):
             of these fundamental concepts - select an image below to get started!"
         )
 
-    with st.beta_expander("Let's Get Started"):
+    with st.expander("Let's Get Started"):
 
         st.write(
             "To begin, select one of the preset images _or_ upload your own image to use throughout the application:"
         )
 
-        col1, col2 = st.beta_columns([1, 2])
+        col1, col2 = st.columns([1, 2])
 
         with col1:
             img_setting = st.radio(
@@ -185,7 +185,7 @@ def fpn(session_state):
         levels of a [ResNet](https://arxiv.org/pdf/1512.03385.pdf) backbone."
     )
 
-    with st.beta_expander("How Do FPNs Work?", expanded=False):
+    with st.expander("How Do FPNs Work?", expanded=False):
         st.write(
             "Feature Pyramid Networks exploit the multi-scale hierarchy that is naturally present in deep CNNs to detect objects at different scales. This is accomplished by augmenting a network's default,\
              bottom-up composition (the innate pyramidal shape) with a top-down pathway and lateral connections, as explained below."
@@ -195,7 +195,7 @@ def fpn(session_state):
             caption="Feature Pyramid Network Architecture",
         )
 
-        col1, col2, col3 = st.beta_columns(3)
+        col1, col2, col3 = st.columns(3)
         with col2:
             st.write("[Adapted Image Credit](https://arxiv.org/pdf/1612.03144.pdf)")
 
@@ -215,7 +215,7 @@ def fpn(session_state):
                 to use for inference."
         )
 
-    with st.beta_expander("RetinaNet Feature Maps", expanded=True):
+    with st.expander("RetinaNet Feature Maps", expanded=True):
         st.image(session_state.img_path, caption="Original Image")
         st.subheader("Feature Maps per FPN Level")
         st.write(
@@ -253,7 +253,7 @@ def rpn(session_state):
             detectors, RetinaNet adopts the concept of _anchor boxes_ as introduced by RPN."
     )
 
-    with st.beta_expander("How do RPNs work?"):
+    with st.expander("How do RPNs work?"):
 
         st.write("**Sliding-window Anchor Grid**")
         st.write(
@@ -276,7 +276,7 @@ def rpn(session_state):
         )
         pass
 
-    with st.beta_expander("RPN Anchor Grid by Pyramid Level", expanded=True):
+    with st.expander("RPN Anchor Grid by Pyramid Level", expanded=True):
 
         st.write(
             "Given the explanation above, the following widget visualizes the anchor grid and anchor box sizes that are applied to feature maps at each FPN level. The top image overlays a set of 9 anchor boxes centered at _one_ anchor point for \
@@ -291,7 +291,7 @@ def rpn(session_state):
 
         stats = session_state.data_artifacts["anchor_plots"][pyramid_level]["fig_stats"]
 
-        col1, col2 = st.beta_columns(2)
+        col1, col2 = st.columns(2)
         with col1:
             st.info(
                 f'**Image Size:** ({" x ".join([str(stat) for stat in stats["image_size"]])}) px \n\n **Anchor Grid:** ({" x ".join([str(stat) for stat in stats["grid_size"]])}) cells \n\n **Total # Anchors:** {stats["grid_size"][0]*stats["grid_size"][1]*9}'
@@ -338,7 +338,7 @@ def nms(session_state):
         Finally, we can apply a confidence threshold to the remaining predictions to filter out noisy detections - here we've chosen a threshold of 0.7."
     )
 
-    with st.beta_expander("How does NMS work?"):
+    with st.expander("How does NMS work?"):
         st.write(
             "Non-Maximum Suppression takes in a refined list of predicted _bounding boxes_ across all FPN levels along with the corresponding class prediction and confidence score. Then for each class independently:"
         )
@@ -348,10 +348,10 @@ def nms(session_state):
             "2. Compare the _Intersection over Union (IoU)_ of that bounding box with all other bounding boxes"
         )
 
-        col1, col2, col3 = st.beta_columns(3)
+        col1, col2, col3 = st.columns(3)
 
         with col2:
-            with st.beta_container():
+            with st.container():
                 st.image("images/iou.png")
                 st.write(
                     "      [Image Credit](https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/)"
@@ -362,13 +362,13 @@ def nms(session_state):
         )
         st.text("")
 
-    with st.beta_expander("Post-process detections", expanded=True):
+    with st.expander("Post-process detections", expanded=True):
         st.write(
             "The image displayed below shows the top predictions from each FPN level _before_ non-max suppression is applied. Click the \
                 checkbox to see the final detections:"
         )
 
-        cola, colb, colc = st.beta_columns([1, 2, 1])
+        cola, colb, colc = st.columns([1, 2, 1])
         with colb:
             nms_checkbox = st.checkbox("Apply Non-Max Suppression")
 
