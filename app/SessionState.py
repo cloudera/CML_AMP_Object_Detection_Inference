@@ -39,7 +39,8 @@
 # ###########################################################################
 
 # This module is adapted from the original Github Gist module
-# found at https://gist.github.com/tvst/036da038ab3e999a64497f42de966a92
+# found at https://gist.github.com/FranzDiebold/898396a6be785d9b5ca6f3706ef9b0bc
+# It has been updated for Streamlit v1.10.0
 
 """Hack to add per-session state to Streamlit.
 
@@ -65,13 +66,8 @@ result:
 
 import os
 
-try:
-    import streamlit.ReportThread as ReportThread
-    from streamlit.server.Server import Server
-except Exception:
-    # Streamlit >= 0.65.0
-    import streamlit.report_thread as ReportThread
-    from streamlit.server.server import Server
+from streamlit.scriptrunner import get_script_run_ctx
+from streamlit.server.server import Server
 
 from src.data_utils import gather_data_artifacts, create_pickle
 
@@ -148,15 +144,12 @@ class SessionState(object):
 
 def get(**kwargs):
     """Gets a SessionState object for the current session.
-
     Creates a new object if necessary.
-
     Parameters
     ----------
     **kwargs : any
         Default values you want to add to the session state, if we're creating a
         new one.
-
     Example
     -------
     >>> session_state = get(user_name='', favorite_color='black')
@@ -165,53 +158,28 @@ def get(**kwargs):
     >>> session_state.user_name = 'Mary'
     >>> session_state.favorite_color
     'black'
-
     Since you set user_name above, next time your script runs this will be the
     result:
     >>> session_state = get(user_name='', favorite_color='black')
     >>> session_state.user_name
     'Mary'
-
     """
     # Hack to get the session object from Streamlit.
 
-    ctx = ReportThread.get_report_ctx()
+    session_id = get_script_run_ctx().session_id
+    session_info = Server.get_current()._get_session_info(session_id)
 
-    this_session = None
+    if session_info is None:
+        raise RuntimeError('Could not get Streamlit session object.')
 
-    current_server = Server.get_current()
-    if hasattr(current_server, "_session_infos"):
-        # Streamlit < 0.56
-        session_infos = Server.get_current()._session_infos.values()
-    else:
-        session_infos = Server.get_current()._session_info_by_id.values()
-
-    for session_info in session_infos:
-        s = session_info.session
-        if (
-            # Streamlit < 0.54.0
-            (hasattr(s, "_main_dg") and s._main_dg == ctx.main_dg)
-            or
-            # Streamlit >= 0.54.0
-            (not hasattr(s, "_main_dg") and s.enqueue == ctx.enqueue)
-            or
-            # Streamlit >= 0.65.2
-            (
-                not hasattr(s, "_main_dg")
-                and s._uploaded_file_mgr == ctx.uploaded_file_mgr
-            )
-        ):
-            this_session = s
-
-    if this_session is None:
-        raise RuntimeError(
-            "Oh noes. Couldn't get your Streamlit Session object. "
-            "Are you doing something fancy with threads?"
-        )
+    this_session = session_info.session
 
     # Got the session object! Now let's attach some state into it.
 
-    if not hasattr(this_session, "_custom_session_state"):
+    if not hasattr(this_session, '_custom_session_state'):
         this_session._custom_session_state = SessionState(**kwargs)
 
     return this_session._custom_session_state
+
+  
+  
