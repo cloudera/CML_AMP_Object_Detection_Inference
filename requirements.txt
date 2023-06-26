@@ -1,3 +1,4 @@
+altair<5 #need to pin altair version when using steamlit<1.23.0
 numpy==1.19.5
 matplotlib==3.3.4
 Pillow==8.1.2
