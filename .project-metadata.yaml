@@ -12,7 +12,7 @@ environment_variables:
       Instruct Streamlit to use polling rather than watchdog file watching.
 
 runtimes:
-  - editor: Workbench
+  - editor: PBJ Workbench
     kernel: Python 3.9
     edition: Standard
 
